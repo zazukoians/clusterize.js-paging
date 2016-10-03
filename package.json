@@ -1,0 +1,34 @@
+{
+  "name": "clusterize.js-paging",
+  "version": "1.0.0",
+  "description": "Paging for clusterize.js",
+  "main": "index.js",
+  "scripts": {
+    "lint": "standard",
+    "test": "npm run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zazukoians/clusterize.js-paging.git"
+  },
+  "keywords": [
+    "clusterize.js",
+    "clusterize",
+    "paging"
+  ],
+  "author": "Zazuko GmbH <info@zazuko.com> (http://www.zazuko.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zazukoians/clusterize.js-paging/issues"
+  },
+  "homepage": "https://github.com/zazukoians/clusterize.js-paging",
+  "dependencies": {
+    "clusterize.js": "^0.17.1",
+    "debounce": "^1.0.0",
+    "inherits": "^2.0.3"
+  },
+  "devDependencies": {
+    "standard": "^8.3.0"
+  },
+  "readmeFilename": "README.md"
+}
