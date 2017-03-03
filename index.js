@@ -26,6 +26,12 @@ ClusterizePaging.prototype.init = function (length) {
 
   this.loading = new Array(Math.ceil(this.rows.length / this.options.pageSize))
 
+  // force no results text
+  if (!length) {
+    this.update([this.options.dummyRow])
+    this.update(this.rows)
+  }
+
   return this.loadRows()
 }
 
