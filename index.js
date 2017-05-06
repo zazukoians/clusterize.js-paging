@@ -5,7 +5,6 @@ var debounce = require('debounce')
 function ClusterizePaging (options) {
   options = options || {}
   options.callbacks = options.callbacks || {}
-  options.callbacks.scrollingProgress = this.handleScrollProgress.bind(this)
 
   Clusterize.call(this, options)
 
@@ -26,6 +25,9 @@ ClusterizePaging.prototype.init = function (length) {
   // ...and create a new one
   this.session = {}
 
+  // forward session to scrolling progress
+  this.options.callbacks.scrollingProgress = this.handleScrollProgress(this.session).bind(this)
+
   this.rows = []
 
   for (var i = 0; i < length; i++) {
@@ -43,12 +45,14 @@ ClusterizePaging.prototype.init = function (length) {
   return this.loadRows(this.session)
 }
 
-ClusterizePaging.prototype.handleScrollProgress = debounce(function (percentage) {
-  var offset = Math.floor(percentage * this.rows.length / 100)
+ClusterizePaging.prototype.handleScrollProgress = function (session) {
+  return debounce(function (percentage) {
+    var offset = Math.floor(percentage * this.rows.length / 100)
 
-  this.loadRows(offset)
-  this.loadRows(offset, -1)
-}, 100)
+    this.loadRows(session, offset)
+    this.loadRows(session, offset, -1)
+  }, 100)
+}
 
 ClusterizePaging.prototype.loadRows = function (session, offset, direction, end) {
   // stop processing if session was canceled
