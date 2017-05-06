@@ -18,6 +18,14 @@ function ClusterizePaging (options) {
 inherits(ClusterizePaging, Clusterize)
 
 ClusterizePaging.prototype.init = function (length) {
+  // cancel existing session...
+  if (this.session) {
+    this.session.canceled = true
+  }
+
+  // ...and create a new one
+  this.session = {}
+
   this.rows = []
 
   for (var i = 0; i < length; i++) {
@@ -32,7 +40,7 @@ ClusterizePaging.prototype.init = function (length) {
     this.update(this.rows)
   }
 
-  return this.loadRows()
+  return this.loadRows(this.session)
 }
 
 ClusterizePaging.prototype.handleScrollProgress = debounce(function (percentage) {
@@ -42,7 +50,12 @@ ClusterizePaging.prototype.handleScrollProgress = debounce(function (percentage)
   this.loadRows(offset, -1)
 }, 100)
 
-ClusterizePaging.prototype.loadRows = function (offset, direction, end) {
+ClusterizePaging.prototype.loadRows = function (session, offset, direction, end) {
+  // stop processing if session was canceled
+  if (session.canceled) {
+    return Promise.resolve()
+  }
+
   var self = this
 
   offset = offset || 0
@@ -67,17 +80,17 @@ ClusterizePaging.prototype.loadRows = function (offset, direction, end) {
 
   offset = page * this.options.pageSize
 
-  return self.loadPage(offset, page).then(function (length) {
+  return self.loadPage(session, offset, page).then(function (length) {
     offset += length * direction
 
     // load more results?
     if ((offset - end) * direction <= 0) {
-      return self.loadRows(offset, direction, end)
+      return self.loadRows(session, offset, direction, end)
     }
   })
 }
 
-ClusterizePaging.prototype.loadPage = function (offset, page) {
+ClusterizePaging.prototype.loadPage = function (session, offset, page) {
   var self = this
 
   // check if the current page is already loading
@@ -90,11 +103,14 @@ ClusterizePaging.prototype.loadPage = function (offset, page) {
 
     return self.options.callbacks.loadRows(offset)
   }).then(function (rows) {
-    self.rows.splice.apply(self.rows, [offset, rows.length].concat(rows))
-    self.update(self.rows)
+    // only update rows if session wasn't canceld
+    if (!session.canceled) {
+      self.rows.splice.apply(self.rows, [offset, rows.length].concat(rows))
+      self.update(self.rows)
 
-    if (self.options.callbacks.rowsLoaded) {
-      self.options.callbacks.rowsLoaded()
+      if (self.options.callbacks.rowsLoaded) {
+        self.options.callbacks.rowsLoaded()
+      }
     }
 
     return rows.length
