@@ -1,6 +1,6 @@
 {
   "name": "clusterize.js-paging",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Paging for clusterize.js",
   "main": "index.js",
   "scripts": {
