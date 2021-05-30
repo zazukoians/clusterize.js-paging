@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/zazukoians/clusterize.js-paging",
   "dependencies": {
-    "clusterize.js": "^0.17.1",
+    "clusterize.js": "^0.18.1",
     "debounce": "^1.0.0",
     "inherits": "^2.0.3"
   },
